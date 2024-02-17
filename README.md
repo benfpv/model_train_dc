@@ -16,6 +16,7 @@ Navigation is achieved through the following:
 
 # Future Directions
 Possible future directions for this project includes:
+- More complex train navigation, where train can navigate from any one station to any other station. Currently, trains can only navigate between stations that do not require direction reversal.
 - Ability to run DCC trains.
 - Ability to run multiple DCC trains on the same railway config. Recommends automatic traffic management functions to avoid collisions.
 - Ability to run multiple DC trains on the same railway config, by powering individual rail sections accordingly. Recommends automatic traffic management functions to avoid collisions.
