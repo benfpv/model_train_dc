@@ -17,14 +17,13 @@ Possible future directions for this project includes:
 - Ability to run multiple DCC trains on the same railway config. Recommends automatic traffic management functions to avoid collisions.
 - Ability to run multiple DC trains on the same railway config, by powering individual rail sections accordingly. Recommends automatic traffic management functions to avoid collisions.
 
-
 # Repository Contents
 1. (Folder) Examples
 2. (Folder) RAIL_SIMPLE
 3. funcs_arduino.cpp
 4. funcs_arduino.h
-5. model_train_dc.ino
-6. model_train_dc_ino_diagrams_pdf.pdf
+5. Instructions.pdf
+6. model_train_dc.ino
 7. Proximity_IR.cpp
 8. Proximity_IR.h
 9. Rail_DC.cpp
