@@ -11,6 +11,9 @@ Navigation is achieved through the following:
 # Important
 - Currently, the scripts only support 1 train running on the railway. However, it was designed to be able to support multiple trains eventually. A couple of functions must be added & tested for multiple trains support (e.g., train traffic management to avoid collision).
 
+# Known Issues
+- Currently, all rail sections must be adjacent to eachother, and any stretch of rail that is not included in any rail section must be of length < the length of the shortest train on that rail.
+
 # Future Directions
 Possible future directions for this project includes:
 - Ability to run DCC trains.
