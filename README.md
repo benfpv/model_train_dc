@@ -1,5 +1,5 @@
 # Model_Train_DC
-Model_Train_DC is an arduino project/prototype which aims to allow a DC-powered model train to carefully navigate most to all railway configurations to travel between rail stations, with minimal user inputs required.
+Model_Train_DC is an arduino project/prototype which aims to allow a DC-powered model train to sequentially navigate and travel between most to any configuration of rail and rail stations, with minimal user inputs required.
 Navigation is achieved through the following:
 1. The user sets up their railway configuration, with proximity sensors marking the beginning and end of each rail section, as well as train stations/stops. A couple of rules must be followed.
 3. The user then creates a folder tree to reflect the organized rail structure - the folder tree acts as a sort of map of the rail sections.
