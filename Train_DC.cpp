@@ -52,7 +52,7 @@ void Train_DC::clear_current_localization_attributes()
   _currentRailSectionName = "NONE";
   // _currentRailSectionIndex = -1;
   _currentRailSectionIndexInPlanned = -1;
-  _currentRailSectionSwitch = 'N';
+  _currentRailSectionSwitch = 0;
 }
 
 void Train_DC::clear_target_planned_localization_attributes()
@@ -148,7 +148,9 @@ void Train_DC::set_target_rail_section_randomly(int numberOfRailSections, String
     bool targetContainsStation = false;
     int currentRailSectionIndex = get_index_of_string(numberOfRailSections, allRailSectionsNames, _currentRailSectionName);
     int targetRailSectionIndex;
-    while (_targetRailSectionName.equals(_currentRailSectionName) || targetContainsStation == false) {
+    int maxTries = numberOfRailSections * 2 + 1;
+    int tries = 0;
+    while ((_targetRailSectionName.equals(_currentRailSectionName) || targetContainsStation == false) && tries < maxTries) {
       targetRailSectionIndex = get_random_target_index(numberOfRailSections, currentRailSectionIndex, direction);
       _targetRailSectionName = allRailSectionsNames[targetRailSectionIndex];
       for (int i = 0; i < numberOfRailStations; i++) {
@@ -156,10 +158,13 @@ void Train_DC::set_target_rail_section_randomly(int numberOfRailSections, String
           targetContainsStation = true; // Break loop if target section has a station
         }
       }
+      tries++;
     }
-    if (_targetRailSectionName != "NONE") {
+    if (_targetRailSectionName != "NONE" && targetContainsStation) {
       _readyToGenerateTarget = false;
       _readyToPathfindTarget = true;
+    } else {
+      Serial.print("["); Serial.print(_trainName); Serial.println("] No valid target found randomly. Will retry next loop.");
     }
   }
 }
@@ -167,7 +172,9 @@ void Train_DC::set_target_rail_section_randomly(int numberOfRailSections, String
 void Train_DC::set_target_rail_section_by_queue(int numberOfRailStations, String allRailStationsNames[]) {
   if (_readyToGenerateTarget == true) {
     bool targetContainsStation = false;
-    while (_targetRailSectionName.equals(_currentRailSectionName) || targetContainsStation == false) {
+    int maxTries = _numberOfTargetRailSectionsInQueue + 1;
+    int tries = 0;
+    while ((_targetRailSectionName.equals(_currentRailSectionName) || targetContainsStation == false) && tries < maxTries) {
       if (_targetRailSectionIndexInQueue >= _numberOfTargetRailSectionsInQueue) {
         _targetRailSectionIndexInQueue = 0;
       }
@@ -179,10 +186,13 @@ void Train_DC::set_target_rail_section_by_queue(int numberOfRailStations, String
         }
       }
       _targetRailSectionIndexInQueue += 1;
+      tries++;
     }
-    if (_targetRailSectionName != "NONE") {
+    if (_targetRailSectionName != "NONE" && targetContainsStation) {
       _readyToGenerateTarget = false;
       _readyToPathfindTarget = true;
+    } else {
+      Serial.print("["); Serial.print(_trainName); Serial.println("] No valid target found in queue. Will retry next loop.");
     }
   }
 }
@@ -553,7 +563,7 @@ void Train_DC::update_travel_plan(int numberOfRailSections, String allRailSectio
       _plannedRailSectionsNames[0] = "NONE";
       // _plannedRailSectionsDirIndices[0] = -1;
       // _plannedRailSectionsNameIndices[0] = -1;
-      _plannedRailSectionsSwitches[0] = 'N';
+      _plannedRailSectionsSwitches[0] = 0;
       // Roll Planneds
       roll_string_array(10, _plannedRailSectionsNames, -1, newPlannedRailSectionsNames);
       // roll_int_array(10, _plannedRailSectionsDirIndices, -1, newPlannedRailSectionsDirIndices);

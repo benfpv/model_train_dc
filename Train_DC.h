@@ -36,8 +36,8 @@ class Train_DC
         bool _switchRealPositiveDirectionStatus = false;
         bool _switchDirectionStatus = false;
         // Attributes - Idle
-        int _idleStartTime_ms;
-        int _currentIdleTime;
+        unsigned long _idleStartTime_ms;
+        unsigned long _currentIdleTime;
         // Attributes - Rail Exploration
         int _realPositiveDirection = -1; // Real Direction when Reverser is Positive (1). 1 is Forward, -1 is Backward. Modulates reverser.
         // Attributes - Rail Localization - Current & Target (Must Reflect Present Truth)
