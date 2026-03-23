@@ -1,3 +1,25 @@
+# Rail_Parser.py
+# Parses a folder-tree rail layout and writes the corresponding parameter block
+# into the target Arduino sketch.
+#
+# USAGE:
+#   Run from the project ROOT directory (i.e., the folder containing model_train_dc.ino
+#   and the layout folder tree), NOT from the tools/ subfolder:
+#
+#       cd path/to/model_train_dc
+#       python tools/Rail_Parser.py
+#
+#   The script reads `master_folder_name` as a subfolder of the current working
+#   directory and writes output directly into `ino_file_name` (also resolved
+#   relative to the current working directory).
+#
+# CONFIGS:
+#   Ready-to-use configurations live under Configs/. To switch layout:
+#     1. Copy the desired Configs/<LAYOUT>/Rail_Parser.py here (or update
+#        master_folder_name below to match your layout folder name).
+#     2. Copy the matching layout folder tree into the project root.
+#     3. Re-run this script.
+
 import os
 import sys
 import time

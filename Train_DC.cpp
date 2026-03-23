@@ -8,7 +8,7 @@
 #include "Train_DC.h"
 #include "funcs_arduino.h"
 
-Train_DC::Train_DC(String trainName, int trainIndex, int trainNavigationType, int pin_EN, int pin_IN1, int pin_IN2, int targetIdleTime, int motorSpeedSlow, int motorSpeedMax, int motorAccelerationStopping, int motorAccelerationMax)
+Train_DC::Train_DC(String trainName, int trainIndex, int trainNavigationType, int pin_EN, int pin_IN1, int pin_IN2, unsigned long targetIdleTime, int motorSpeedSlow, int motorSpeedMax, int motorAccelerationStopping, int motorAccelerationMax)
 {   
     // Attributes - Train Identity
     _trainName = trainName;
@@ -622,7 +622,7 @@ void Train_DC::update_travel_plan(int numberOfRailSections, String allRailSectio
     }
   }
   // If Target Rail Section Reached -- Rail Stations Docking does NOT activate if not a Target Rail Section.
-  if (_currentRailSectionName == _targetRailSectionName) {
+  if (_currentRailSectionName.equals(_targetRailSectionName)) {
     _arriveStation = true;
     _currentRailStationName = _currentRailSectionName;
   }

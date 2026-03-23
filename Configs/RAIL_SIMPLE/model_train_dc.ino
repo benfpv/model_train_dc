@@ -16,70 +16,70 @@
 int demoMode = 1; // 0 = not demo mode, 1 = simulate departure and move to 3rd rail section forward, 2 = simulate hitting fullstop sensor.
 
 // Rail_Parser Output Parameters Begin
-String masterDirName = "RAIL_DUALSWITCH";
-String allRailSectionsDirs[5][10] = 
+String masterDirName = "RAIL_SIMPLE";
+String allRailSectionsDirs[3][10] = 
 {
-{"ASIA"}, 
-{"ASIA", "CYTZ"}, {"MAIN"}, {"MAIN", "CYTZ"}, {"MAIN", "CYYZ"}
+{"MAIN"}, 
+{"MAIN", "MIDD"}, {"MAIN", "MIDD", "CYYZ"}
 };
 String allRailSectionsNames[] = 
 {
-"ASIA", "CYTZ", "MAIN", "CYTZ", "CYYZ"
+"MAIN", "MIDD", "CYYZ"
 };
-String allSubordinateNames[5][3] = 
+String allSubordinateNames[3][3] = 
 {
-{"CYTZ", "NONE", "NONE"}, 
-{"NONE", "NONE", "NONE"}, {"CYTZ", "CYYZ", "NONE"}, {"NONE", "NONE", "NONE"}, {"NONE", "NONE", "NONE"}
+{"MIDD", "NONE", "NONE"}, 
+{"CYYZ", "NONE", "NONE"}, {"NONE", "NONE", "NONE"}
 };
 String allSubordinateSwitchesNames[] = 
 {
-"MAIN"
+
 };
 int allSubordinateSwitchesPositions[][3] = 
 {
-{-1, 1, 0}
+
 };
-String allSuperordinateNames[5][3] = 
+String allSuperordinateNames[3][3] = 
 {
 {"NONE", "NONE", "NONE"}, 
-{"ASIA", "MAIN", "NONE"}, {"NONE", "NONE", "NONE"}, {"ASIA", "MAIN", "NONE"}, {"MAIN", "NONE", "NONE"}
+{"MAIN", "NONE", "NONE"}, {"MIDD", "NONE", "NONE"}
 };
 String allSuperordinateSwitchesNames[] = 
 {
-"CYTZ"
+
 };
 int allSuperordinateSwitchesPositions[][3] = 
 {
-{-1, 1, 0}
+
 };
 // Rail_Parser Output Parameters End
 
 // User Parameters - Rail Section Begin/End Detectors (IR Proximity Sensors) - They must correspond by index to the rail section names (index 0 of pins == index 0 of section names)
-int beginProxPins_IN[] = {22, 24, 26, 24, 30}; // Digital In
-int endProxPins_IN[] = {23, 25, 27, 25, 31}; // Digital In
+int beginProxPins_IN[] = {22, 24, 26}; // Digital In
+int endProxPins_IN[] = {23, 25, 27}; // Digital In
 
 // User Parameters - Rail Fullstop Detectors (IR Proximity Sensors)
 // You can declare some pins (belonging to begin/endProxPins) as fullstop pins by putting their numbers in this array.
-int fullstopProxPins_IN[] = {22, 25, 26, 31}; // Digital in
+int fullstopProxPins_IN[] = {22, 27}; // Digital in
 
 // User Parameters - Rail Stations (Train Stops via Servo + Distance Sensor Combos)
 String allRailStationsNames[] = 
 {
-"MAIN", "CYYZ", "CYTZ", "ASIA"
+"MAIN", "CYYZ"
 };
 
 // User Parameters - Rail Station Detectors (IR Proximity Sensors) - These must correspond by index to the rail station names (index 0 of pins == index 0 of station names)
-int stationProxPins_IN[] = {44, 45, 46, 47};
+int stationProxPins_IN[] = {40, 41};
 
 // User Parameters - Subordinate Rail Switches (if using switches) - These must correspond by index to each subordinate switch in allSubordinateSwitchesNames (index 0 of pins == index 0 of allSubordinateSwitchesNames)
-int subordinateRailSwitchPins_EN[] = {5};
-int subordinateRailSwitchPins_IN1[] = {6};
-int subordinateRailSwitchPins_IN2[] = {7};
+int subordinateRailSwitchPins_EN[] = {};
+int subordinateRailSwitchPins_IN1[] = {};
+int subordinateRailSwitchPins_IN2[] = {};
 
 // User Parameters - Superordinate Rail Switches (if using switches) - These must correspond by index to each superordinate switch in allSuperordinateSwitchesNames (index 0 of pins == index 0 of allSuperordinateSwitchesNames)
-int superordinateRailSwitchPins_EN[] = {8};
-int superordinateRailSwitchPins_IN1[] = {9};
-int superordinateRailSwitchPins_IN2[] = {10};
+int superordinateRailSwitchPins_EN[] = {};
+int superordinateRailSwitchPins_IN1[] = {};
+int superordinateRailSwitchPins_IN2[] = {};
 
 // User Parameters - Trains
 String trainNames[] = {"EF81"}; // Train names in Strings, size of 4.
@@ -87,19 +87,19 @@ int trainNavigationTypes[] = {0}; // 0 Random, 1 Queue Sequential
 int trainPins_EN[] = {2};
 int trainPins_IN1[] = {3};
 int trainPins_IN2[] = {4};
-int trainTargetIdleTimes[] = {9000}; // Time in milliseconds to stay idle at a station upon arriving.
+unsigned long trainTargetIdleTimes[] = {9000}; // Time in milliseconds to stay idle at a station upon arriving.
 int trainMotorSpeedSlows[] = {30}; // Speed limit in motorspeed (/255) when travelling in target rail section.
 int trainMotorSpeedMaxs[] = {34}; // Speed limit in motorspeed (/255) when travelling in non-target rail section.
 int trainMotorAccelerationStoppings[] = {2}; // Acceleration/deceleration limit per loop when stopping normally.
 int trainMotorAccelerationMaxs[] = {5}; // Acceleration/deceleration limit per loop when emergency stopping.
-String trainStartingRailSectionNames[] = {"JNRT"}; // The name of the rail station that each train will start from.
+String trainStartingRailSectionNames[] = {"MAIN"}; // The name of the rail station that each train will start from.
 String trainTargetRailStationsNamesQueue[][10] =
 {
-  {"CYYZ", "MAIN", "CYTZ", "ASIA", "CYTZ", "MAIN"}
+  {"MAIN", "CYYZ"}
 };
 int trainNumberOfTargetRailStationsInQueue[] = 
 {
-  6
+  2
 };
 
 // Initialize Rail
@@ -108,32 +108,24 @@ Rail_DC rail(masterDirName);
 Proximity_IR fullstopProx[] = 
 {
   Proximity_IR(fullstopProxPins_IN[0]), 
-  Proximity_IR(fullstopProxPins_IN[1]),
-  Proximity_IR(fullstopProxPins_IN[2]),
-  Proximity_IR(fullstopProxPins_IN[3])
+  Proximity_IR(fullstopProxPins_IN[1])
 };
 Proximity_IR beginProx[] = 
 {
   Proximity_IR(beginProxPins_IN[0]), 
   Proximity_IR(beginProxPins_IN[1]),
-  Proximity_IR(beginProxPins_IN[2]),
-  Proximity_IR(beginProxPins_IN[3]),
-  Proximity_IR(beginProxPins_IN[4])
+  Proximity_IR(beginProxPins_IN[2])
 };
 Proximity_IR endProx[] = 
 {
   Proximity_IR(endProxPins_IN[0]), 
   Proximity_IR(endProxPins_IN[1]),
-  Proximity_IR(endProxPins_IN[2]),
-  Proximity_IR(endProxPins_IN[3]),
-  Proximity_IR(endProxPins_IN[4])
+  Proximity_IR(endProxPins_IN[2])
 };
 Proximity_IR stationProx[] = 
 {
   Proximity_IR(stationProxPins_IN[0]), 
-  Proximity_IR(stationProxPins_IN[1]),
-  Proximity_IR(stationProxPins_IN[2]),
-  Proximity_IR(stationProxPins_IN[3])
+  Proximity_IR(stationProxPins_IN[1])
 };
 // Initialize Trains
 Train_DC trains[] = 
@@ -143,11 +135,9 @@ Train_DC trains[] =
 // Initialize Rail Switches
 Rail_Switch_DC subordinateRailSwitches[] =
 {
-  Rail_Switch_DC(subordinateRailSwitchPins_EN[0], subordinateRailSwitchPins_IN1[0], subordinateRailSwitchPins_IN2[0])
 };
 Rail_Switch_DC superordinateRailSwitches[] =
 {
-  Rail_Switch_DC(superordinateRailSwitchPins_EN[0], superordinateRailSwitchPins_IN1[0], superordinateRailSwitchPins_IN2[0])
 };
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
@@ -217,7 +207,6 @@ void setup() {
   }
   // Setup Trains
   Serial.println("--- Setup: Auto Trains ---");
-  int numberOfTargetRailSectionsInQueue;
   for (int i = 0; i < numberOfTrains; i++) {
     trains[i].begin();
     if (trains[i]._trainNavigationType == 1) {
@@ -300,9 +289,9 @@ void setup() {
   Serial.println("------ LOOP BEGIN ------");
 }
 
-void setup_countdown(int countdownTime_ms) {
-  int startTime_ms = millis();
-  int currentTime_ms = 0;
+void setup_countdown(unsigned long countdownTime_ms) {
+  unsigned long startTime_ms = millis();
+  unsigned long currentTime_ms = 0;
   int maxDisplayedText = 1;
   if (numberOfTrains > 3) {
     maxDisplayedText = 3;
@@ -338,16 +327,14 @@ void setup_countdown(int countdownTime_ms) {
 }
 
 int loopTimeTargetMinimum_ms = 250; // WARNING: Directly related to train acceleration. Default 250. Raise floor of loop time to stabilize it.
-int loopTimeStart_ms;
-int loopTimeDuration_ms;
-int loopTimeDurationFinal_ms;
-int loopTimeDurationFinalCorrection_ms = 0;
-int loopTimeToDelay_ms;
+unsigned long loopTimeStart_ms;
+unsigned long loopTimeDuration_ms;
+unsigned long loopTimeDurationFinal_ms;
+unsigned long loopTimeToDelay_ms;
 int loopCount = 0;
 void loop() {
   loopTimeStart_ms = millis();
   Serial.print("----- LOOP BEGIN #"); Serial.print(loopCount); Serial.println(" -----");
-  randomSeed(analogRead(A0));
 
   update_prox();
   update_rail();
@@ -363,12 +350,12 @@ void loop() {
   if (loopTimeDuration_ms < loopTimeTargetMinimum_ms) {
     loopTimeToDelay_ms = loopTimeTargetMinimum_ms - loopTimeDuration_ms;
     //Serial.print("loopTimeToDelay: "); Serial.println(loopTimeToDelay_ms);
-    delay(loopTimeToDelay_ms - loopTimeDurationFinalCorrection_ms);
+    delay(loopTimeToDelay_ms);
   }
   loopTimeDurationFinal_ms = millis() - loopTimeStart_ms;
   Serial.print("LOOP END TIME: "); Serial.println(loopTimeDurationFinal_ms);
   // if (loopCount == 0) {
-  //   loopTimeDurationFinalCorrection_ms = loopTimeDurationFinal_ms - loopTimeTargetMinimum_ms;
+  //   loopTimeDurationFinalCorrection = loopTimeDurationFinal_ms - loopTimeTargetMinimum_ms;
   // }
   if (demoMode != 0) {
     delay(1000);
@@ -792,24 +779,32 @@ void update_rail_switches() {
           // Serial.print("Post-Switch Rail Section: "); Serial.println(nextRailSectionName);
           thisPlannedSwitchIndex = get_index_of_string(3, allSubordinateNames[thisRailSectionIndex], nextRailSectionName);
           // Serial.print("Planned Switch Index: "); Serial.println(thisPlannedSwitchIndex);
-          thisCurrentSwitchPosition = subordinateRailSwitches[thisSwitchIndex]._currentSwitch;
-          thisPlannedSwitchPosition = allSubordinateSwitchesPositions[thisSwitchIndex][thisPlannedSwitchIndex];
-          if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {;
-            // Serial.print("Switch Current/Planned "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
-            subordinateRailSwitches[thisSwitchIndex].set_switch(thisPlannedSwitchPosition);
+          if (thisPlannedSwitchIndex != -1) {
+            thisCurrentSwitchPosition = subordinateRailSwitches[thisSwitchIndex]._currentSwitch;
+            thisPlannedSwitchPosition = allSubordinateSwitchesPositions[thisSwitchIndex][thisPlannedSwitchIndex];
+            if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {;
+              // Serial.print("Switch Current/Planned "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
+              subordinateRailSwitches[thisSwitchIndex].set_switch(thisPlannedSwitchPosition);
+            }
           }
         }
         if (thisAntiSwitchIndex != -1) {
           // Serial.println("Dir 1, AntiSwitchIndex Found");
-          prevRailSectionName = trains[t]._currentRailSectionName;
+          // prevRailSectionName is the section we came from; not tracked at departure, so look up
+          // using plannedRailSectionsNames[0] as a proxy (where we are heading) — if the section
+          // is a converging junction being departed forward, this antiswitch is set by the planned
+          // sections loop instead; guard against -1 to prevent UB.
+          prevRailSectionName = trains[t]._plannedRailSectionsNames[0];
           thisPlannedSwitchIndex = get_index_of_string(3, allSuperordinateNames[thisRailSectionIndex], prevRailSectionName);
           // Serial.print("Pre-Switch Rail Section: "); Serial.println(prevRailSectionName);
           // Serial.print("Planned Switch Index: "); Serial.println(thisPlannedSwitchIndex);
-          thisCurrentSwitchPosition = superordinateRailSwitches[thisAntiSwitchIndex]._currentSwitch;
-          thisPlannedSwitchPosition = allSuperordinateSwitchesPositions[thisAntiSwitchIndex][thisPlannedSwitchIndex];
-          if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
-            // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
-            superordinateRailSwitches[thisAntiSwitchIndex].set_switch(thisPlannedSwitchPosition);
+          if (thisPlannedSwitchIndex != -1) {
+            thisCurrentSwitchPosition = superordinateRailSwitches[thisAntiSwitchIndex]._currentSwitch;
+            thisPlannedSwitchPosition = allSuperordinateSwitchesPositions[thisAntiSwitchIndex][thisPlannedSwitchIndex];
+            if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
+              // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
+              superordinateRailSwitches[thisAntiSwitchIndex].set_switch(thisPlannedSwitchPosition);
+            }
           }
         }
       }
@@ -823,24 +818,30 @@ void update_rail_switches() {
           // Serial.print("Post-Switch Rail Section: "); Serial.println(nextRailSectionName);
           // Serial.print("Planned Switch Index: "); Serial.println(thisPlannedSwitchIndex);
           thisPlannedSwitchIndex = get_index_of_string(3, allSuperordinateNames[thisRailSectionIndex], nextRailSectionName);
-          thisCurrentSwitchPosition = superordinateRailSwitches[thisSwitchIndex]._currentSwitch;
-          thisPlannedSwitchPosition = allSuperordinateSwitchesPositions[thisSwitchIndex][thisPlannedSwitchIndex];
-          if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
-            // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
-            superordinateRailSwitches[thisSwitchIndex].set_switch(thisPlannedSwitchPosition);
+          if (thisPlannedSwitchIndex != -1) {
+            thisCurrentSwitchPosition = superordinateRailSwitches[thisSwitchIndex]._currentSwitch;
+            thisPlannedSwitchPosition = allSuperordinateSwitchesPositions[thisSwitchIndex][thisPlannedSwitchIndex];
+            if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
+              // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
+              superordinateRailSwitches[thisSwitchIndex].set_switch(thisPlannedSwitchPosition);
+            }
           }
         }
         if (thisAntiSwitchIndex != -1) {
           // Serial.println("Dir -1, AntiSwitchIndex Found");
-          prevRailSectionName = trains[t]._currentRailSectionName;
+          // When going backward through a diverge-point, the subordinate switch must align with
+          // the branch we are coming from (plannedRailSectionsNames[0]).
+          prevRailSectionName = trains[t]._plannedRailSectionsNames[0];
           thisPlannedSwitchIndex = get_index_of_string(3, allSubordinateNames[thisRailSectionIndex], prevRailSectionName);
           // Serial.print("Pre-Switch Rail Section: "); Serial.println(prevRailSectionName);
           // Serial.print("Planned Switch Index: "); Serial.println(thisPlannedSwitchIndex);
-          thisCurrentSwitchPosition = subordinateRailSwitches[thisAntiSwitchIndex]._currentSwitch;
-          thisPlannedSwitchPosition = allSubordinateSwitchesPositions[thisAntiSwitchIndex][thisPlannedSwitchIndex];
-          if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
-            // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
-            subordinateRailSwitches[thisAntiSwitchIndex].set_switch(thisPlannedSwitchPosition);
+          if (thisPlannedSwitchIndex != -1) {
+            thisCurrentSwitchPosition = subordinateRailSwitches[thisAntiSwitchIndex]._currentSwitch;
+            thisPlannedSwitchPosition = allSubordinateSwitchesPositions[thisAntiSwitchIndex][thisPlannedSwitchIndex];
+            if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
+              // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
+              subordinateRailSwitches[thisAntiSwitchIndex].set_switch(thisPlannedSwitchPosition);
+            }
           }
         }
       }
@@ -860,11 +861,13 @@ void update_rail_switches() {
               // Serial.print("Post-Switch Rail Section: "); Serial.println(nextRailSectionName);
               thisPlannedSwitchIndex = get_index_of_string(3, allSubordinateNames[thisRailSectionIndex], nextRailSectionName);
               // Serial.print("Planned Switch Index: "); Serial.println(thisPlannedSwitchIndex);
-              thisCurrentSwitchPosition = subordinateRailSwitches[thisSwitchIndex]._currentSwitch;
-              thisPlannedSwitchPosition = allSubordinateSwitchesPositions[thisSwitchIndex][thisPlannedSwitchIndex];
-              if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {;
-                // Serial.print("Switch Current/Planned "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
-                subordinateRailSwitches[thisSwitchIndex].set_switch(thisPlannedSwitchPosition);
+              if (thisPlannedSwitchIndex != -1) {
+                thisCurrentSwitchPosition = subordinateRailSwitches[thisSwitchIndex]._currentSwitch;
+                thisPlannedSwitchPosition = allSubordinateSwitchesPositions[thisSwitchIndex][thisPlannedSwitchIndex];
+                if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {;
+                  // Serial.print("Switch Current/Planned "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
+                  subordinateRailSwitches[thisSwitchIndex].set_switch(thisPlannedSwitchPosition);
+                }
               }
             }
           }
@@ -879,11 +882,13 @@ void update_rail_switches() {
             thisPlannedSwitchIndex = get_index_of_string(3, allSuperordinateNames[thisRailSectionIndex], prevRailSectionName);
             // Serial.print("Pre-Switch Rail Section: "); Serial.println(prevRailSectionName);
             // Serial.print("Planned Switch Index: "); Serial.println(thisPlannedSwitchIndex);
-            thisCurrentSwitchPosition = superordinateRailSwitches[thisAntiSwitchIndex]._currentSwitch;
-            thisPlannedSwitchPosition = allSuperordinateSwitchesPositions[thisAntiSwitchIndex][thisPlannedSwitchIndex];
-            if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
-              // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
-              superordinateRailSwitches[thisAntiSwitchIndex].set_switch(thisPlannedSwitchPosition);
+            if (thisPlannedSwitchIndex != -1) {
+              thisCurrentSwitchPosition = superordinateRailSwitches[thisAntiSwitchIndex]._currentSwitch;
+              thisPlannedSwitchPosition = allSuperordinateSwitchesPositions[thisAntiSwitchIndex][thisPlannedSwitchIndex];
+              if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
+                // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
+                superordinateRailSwitches[thisAntiSwitchIndex].set_switch(thisPlannedSwitchPosition);
+              }
             }
           }
         }
@@ -898,11 +903,13 @@ void update_rail_switches() {
               // Serial.print("Post-Switch Rail Section: "); Serial.println(nextRailSectionName);
               // Serial.print("Planned Switch Index: "); Serial.println(thisPlannedSwitchIndex);
               thisPlannedSwitchIndex = get_index_of_string(3, allSuperordinateNames[thisRailSectionIndex], nextRailSectionName);
-              thisCurrentSwitchPosition = superordinateRailSwitches[thisSwitchIndex]._currentSwitch;
-              thisPlannedSwitchPosition = allSuperordinateSwitchesPositions[thisSwitchIndex][thisPlannedSwitchIndex];
-              if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
-                // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
-                superordinateRailSwitches[thisSwitchIndex].set_switch(thisPlannedSwitchPosition);
+              if (thisPlannedSwitchIndex != -1) {
+                thisCurrentSwitchPosition = superordinateRailSwitches[thisSwitchIndex]._currentSwitch;
+                thisPlannedSwitchPosition = allSuperordinateSwitchesPositions[thisSwitchIndex][thisPlannedSwitchIndex];
+                if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
+                  // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
+                  superordinateRailSwitches[thisSwitchIndex].set_switch(thisPlannedSwitchPosition);
+                }
               }
             }
           }
@@ -917,11 +924,13 @@ void update_rail_switches() {
             thisPlannedSwitchIndex = get_index_of_string(3, allSubordinateNames[thisRailSectionIndex], prevRailSectionName);
             // Serial.print("Pre-Switch Rail Section: "); Serial.println(prevRailSectionName);
             // Serial.print("Planned Switch Index: "); Serial.println(thisPlannedSwitchIndex);
-            thisCurrentSwitchPosition = subordinateRailSwitches[thisAntiSwitchIndex]._currentSwitch;
-            thisPlannedSwitchPosition = allSubordinateSwitchesPositions[thisAntiSwitchIndex][thisPlannedSwitchIndex];
-            if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
-              // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
-              subordinateRailSwitches[thisAntiSwitchIndex].set_switch(thisPlannedSwitchPosition);
+            if (thisPlannedSwitchIndex != -1) {
+              thisCurrentSwitchPosition = subordinateRailSwitches[thisAntiSwitchIndex]._currentSwitch;
+              thisPlannedSwitchPosition = allSubordinateSwitchesPositions[thisAntiSwitchIndex][thisPlannedSwitchIndex];
+              if (thisPlannedSwitchPosition != thisCurrentSwitchPosition) {
+                // Serial.print("Switch Current/New "); Serial.print(thisCurrentSwitchPosition); Serial.print("/"); Serial.println(thisPlannedSwitchPosition);
+                subordinateRailSwitches[thisAntiSwitchIndex].set_switch(thisPlannedSwitchPosition);
+              }
             }
           }
         }
@@ -965,7 +974,7 @@ void update_oled_display() {
   display.println("");
 
   display.setCursor(0,20);
-  display.print("Curr: "); display.print(trains[0]._currentRailSectionName); display.print("");
+  display.print("Curr: "); display.print(trains[0]._currentRailSectionName); display.println("");
   
   display.setCursor(0,30);
   if (trains[0]._departStation == true) {

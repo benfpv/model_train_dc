@@ -17,7 +17,7 @@ class Train_DC
         int _trainIndex;
         int _trainNavigationType; // 0 == randomly generate target each time, 1 == follow queue, 3 == follow randomly generated from queue.
         // Attributes - User Input Train Characteristics
-        int _targetIdleTime = 9000; // Idle time in milliSeconds between reaching target and readyToMoveStatus.
+        unsigned long _targetIdleTime = 9000; // Idle time in milliSeconds between reaching target and readyToMoveStatus.
         int _motorSpeedSlow = 30;
         int _motorSpeedMax = 34;
         int _motorAccelerationStopping = 2;
@@ -78,7 +78,7 @@ class Train_DC
         int _motorSpeed = 0;
         int _motorSpeedTarget = 0;
         // Functions - Train Initialization
-        Train_DC(String trainName, int trainIndex, int trainNavigationType, int pin_EN, int pin_IN1, int pin_IN2, int targetIdleTime, int motorSpeedSlow, int motorSpeedMax, int motorAccelerationStopping, int motorAccelerationMax);
+        Train_DC(String trainName, int trainIndex, int trainNavigationType, int pin_EN, int pin_IN1, int pin_IN2, unsigned long targetIdleTime, int motorSpeedSlow, int motorSpeedMax, int motorAccelerationStopping, int motorAccelerationMax);
         void begin();
         // Functions - Rail Path Initialization
         void init_target_rail_section_queue(int numberOfTargetRailSectionsInQueue, String targetRailSectionsNamesQueue[]);

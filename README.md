@@ -22,36 +22,30 @@ Possible future directions for this project includes:
 - Ability to run multiple DC trains on the same railway config, by powering individual rail sections accordingly. Recommends automatic traffic management functions to avoid collisions.
 
 # Repository Contents
-1. (Folder) Examples
-2. (Folder) RAIL_SIMPLE
-3. funcs_arduino.cpp
-4. funcs_arduino.h
-5. Instructions.pdf
-6. model_train_dc.ino
-7. Proximity_IR.cpp
-8. Proximity_IR.h
-9. Rail_DC.cpp
-10. Rail_DC.h
-11. Rail_Parser.py
-12. Rail_Switch_DC.cpp
-13. Rail_Switch_DC.h
-14. README.md
-15. Train_DC.cpp
-16. Train_DC.h
+1. (Folder) Configs — ready-to-use track layout configurations (RAIL_SIMPLE, DUALSWITCH, MIDSPLIT). Each contains a pre-populated `model_train_dc.ino` and a matching `Rail_Parser.py`.
+2. (Folder) tools — utility scripts. Run `tools/Rail_Parser.py` from the project root (see script header for details).
+3. funcs_arduino.cpp / .h
+4. Instructions.pdf
+5. model_train_dc.ino
+6. Proximity_IR.cpp / .h
+7. Rail_DC.cpp / .h
+8. Rail_Switch_DC.cpp / .h
+9. README.md
+10. Train_DC.cpp / .h
 
 # Software Prerequisites (on typical OS)
 1. Arduino IDE.
 2. The following Arduino packages (for output to I2C OLED display): Wire.h, Adafruit_GFX.h, Adafruit_SSD1306.h.
-3. Python: Numpy, CV2 (opencv-python).
+3. Python (for running `tools/Rail_Parser.py`).
 
 # Instructions for Use - Summary
-For detailed instructions for use, please refer to the included “model_train_dc_ino_diagrams_pdf.pdf” file.
+For detailed instructions for use, please refer to the included `Instructions.pdf` file.
 In summary, the following must be completed by the user:
 1. Setup rail configuration in-real-life (IRL).
 	a. Divide the railway into separate rail sections.
 	b. Place rail stations within designated rail sections.
 2. Create a folder tree which reflects the IRL rail configuration.
-3. Edit and run “Rail_Parser.py”.
+3. Edit and run `tools/Rail_Parser.py` **from the project root directory** (`cd path/to/model_train_dc`, then `python tools/Rail_Parser.py`). Alternatively, copy and run the pre-configured `Rail_Parser.py` from the matching `Configs/<LAYOUT>/` folder.
 4. Edit “Model_Train_DC.ino” Arduino script.
 	a. Edit the rail parameters and connect the rail-section and rail-station sensors, motor drivers for the trains, and motor drivers for the switches.
 	b. Edit the train parameters.

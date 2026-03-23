@@ -16,70 +16,70 @@
 int demoMode = 1; // 0 = not demo mode, 1 = simulate departure and move to 3rd rail section forward, 2 = simulate hitting fullstop sensor.
 
 // Rail_Parser Output Parameters Begin
-String masterDirName = "RAIL_SIMPLE";
-String allRailSectionsDirs[3][10] = 
+String masterDirName = "RAIL_DUALSWITCH";
+String allRailSectionsDirs[5][10] = 
 {
-{"MAIN"}, 
-{"MAIN", "MIDD"}, {"MAIN", "MIDD", "CYYZ"}
+{"ASIA"}, 
+{"ASIA", "CYTZ"}, {"MAIN"}, {"MAIN", "CYTZ"}, {"MAIN", "CYYZ"}
 };
 String allRailSectionsNames[] = 
 {
-"MAIN", "MIDD", "CYYZ"
+"ASIA", "CYTZ", "MAIN", "CYTZ", "CYYZ"
 };
-String allSubordinateNames[3][3] = 
+String allSubordinateNames[5][3] = 
 {
-{"MIDD", "NONE", "NONE"}, 
-{"CYYZ", "NONE", "NONE"}, {"NONE", "NONE", "NONE"}
+{"CYTZ", "NONE", "NONE"}, 
+{"NONE", "NONE", "NONE"}, {"CYTZ", "CYYZ", "NONE"}, {"NONE", "NONE", "NONE"}, {"NONE", "NONE", "NONE"}
 };
 String allSubordinateSwitchesNames[] = 
 {
-
+"MAIN"
 };
 int allSubordinateSwitchesPositions[][3] = 
 {
-
+{-1, 1, 0}
 };
-String allSuperordinateNames[3][3] = 
+String allSuperordinateNames[5][3] = 
 {
 {"NONE", "NONE", "NONE"}, 
-{"MAIN", "NONE", "NONE"}, {"MIDD", "NONE", "NONE"}
+{"ASIA", "MAIN", "NONE"}, {"NONE", "NONE", "NONE"}, {"ASIA", "MAIN", "NONE"}, {"MAIN", "NONE", "NONE"}
 };
 String allSuperordinateSwitchesNames[] = 
 {
-
+"CYTZ"
 };
 int allSuperordinateSwitchesPositions[][3] = 
 {
-
+{-1, 1, 0}
 };
 // Rail_Parser Output Parameters End
 
 // User Parameters - Rail Section Begin/End Detectors (IR Proximity Sensors) - They must correspond by index to the rail section names (index 0 of pins == index 0 of section names)
-int beginProxPins_IN[] = {22, 24, 26}; // Digital In
-int endProxPins_IN[] = {23, 25, 27}; // Digital In
+int beginProxPins_IN[] = {22, 24, 26, 24, 30}; // Digital In
+int endProxPins_IN[] = {23, 25, 27, 25, 31}; // Digital In
 
 // User Parameters - Rail Fullstop Detectors (IR Proximity Sensors)
 // You can declare some pins (belonging to begin/endProxPins) as fullstop pins by putting their numbers in this array.
-int fullstopProxPins_IN[] = {22, 27}; // Digital in
+int fullstopProxPins_IN[] = {22, 25, 26, 31}; // Digital in
 
 // User Parameters - Rail Stations (Train Stops via Servo + Distance Sensor Combos)
 String allRailStationsNames[] = 
 {
-"MAIN", "CYYZ"
+"MAIN", "CYYZ", "CYTZ", "ASIA"
 };
 
 // User Parameters - Rail Station Detectors (IR Proximity Sensors) - These must correspond by index to the rail station names (index 0 of pins == index 0 of station names)
-int stationProxPins_IN[] = {40, 41};
+int stationProxPins_IN[] = {44, 45, 46, 47};
 
 // User Parameters - Subordinate Rail Switches (if using switches) - These must correspond by index to each subordinate switch in allSubordinateSwitchesNames (index 0 of pins == index 0 of allSubordinateSwitchesNames)
-int subordinateRailSwitchPins_EN[] = {};
-int subordinateRailSwitchPins_IN1[] = {};
-int subordinateRailSwitchPins_IN2[] = {};
+int subordinateRailSwitchPins_EN[] = {5};
+int subordinateRailSwitchPins_IN1[] = {6};
+int subordinateRailSwitchPins_IN2[] = {7};
 
 // User Parameters - Superordinate Rail Switches (if using switches) - These must correspond by index to each superordinate switch in allSuperordinateSwitchesNames (index 0 of pins == index 0 of allSuperordinateSwitchesNames)
-int superordinateRailSwitchPins_EN[] = {};
-int superordinateRailSwitchPins_IN1[] = {};
-int superordinateRailSwitchPins_IN2[] = {};
+int superordinateRailSwitchPins_EN[] = {8};
+int superordinateRailSwitchPins_IN1[] = {9};
+int superordinateRailSwitchPins_IN2[] = {10};
 
 // User Parameters - Trains
 String trainNames[] = {"EF81"}; // Train names in Strings, size of 4.
@@ -92,14 +92,14 @@ int trainMotorSpeedSlows[] = {30}; // Speed limit in motorspeed (/255) when trav
 int trainMotorSpeedMaxs[] = {34}; // Speed limit in motorspeed (/255) when travelling in non-target rail section.
 int trainMotorAccelerationStoppings[] = {2}; // Acceleration/deceleration limit per loop when stopping normally.
 int trainMotorAccelerationMaxs[] = {5}; // Acceleration/deceleration limit per loop when emergency stopping.
-String trainStartingRailSectionNames[] = {"MAIN"}; // The name of the rail station that each train will start from.
+String trainStartingRailSectionNames[] = {"JNRT"}; // The name of the rail station that each train will start from.
 String trainTargetRailStationsNamesQueue[][10] =
 {
-  {"MAIN", "CYYZ"}
+  {"CYYZ", "MAIN", "CYTZ", "ASIA", "CYTZ", "MAIN"}
 };
 int trainNumberOfTargetRailStationsInQueue[] = 
 {
-  2
+  6
 };
 
 // Initialize Rail
@@ -108,24 +108,32 @@ Rail_DC rail(masterDirName);
 Proximity_IR fullstopProx[] = 
 {
   Proximity_IR(fullstopProxPins_IN[0]), 
-  Proximity_IR(fullstopProxPins_IN[1])
+  Proximity_IR(fullstopProxPins_IN[1]),
+  Proximity_IR(fullstopProxPins_IN[2]),
+  Proximity_IR(fullstopProxPins_IN[3])
 };
 Proximity_IR beginProx[] = 
 {
   Proximity_IR(beginProxPins_IN[0]), 
   Proximity_IR(beginProxPins_IN[1]),
-  Proximity_IR(beginProxPins_IN[2])
+  Proximity_IR(beginProxPins_IN[2]),
+  Proximity_IR(beginProxPins_IN[3]),
+  Proximity_IR(beginProxPins_IN[4])
 };
 Proximity_IR endProx[] = 
 {
   Proximity_IR(endProxPins_IN[0]), 
   Proximity_IR(endProxPins_IN[1]),
-  Proximity_IR(endProxPins_IN[2])
+  Proximity_IR(endProxPins_IN[2]),
+  Proximity_IR(endProxPins_IN[3]),
+  Proximity_IR(endProxPins_IN[4])
 };
 Proximity_IR stationProx[] = 
 {
   Proximity_IR(stationProxPins_IN[0]), 
-  Proximity_IR(stationProxPins_IN[1])
+  Proximity_IR(stationProxPins_IN[1]),
+  Proximity_IR(stationProxPins_IN[2]),
+  Proximity_IR(stationProxPins_IN[3])
 };
 // Initialize Trains
 Train_DC trains[] = 
@@ -135,9 +143,11 @@ Train_DC trains[] =
 // Initialize Rail Switches
 Rail_Switch_DC subordinateRailSwitches[] =
 {
+  Rail_Switch_DC(subordinateRailSwitchPins_EN[0], subordinateRailSwitchPins_IN1[0], subordinateRailSwitchPins_IN2[0])
 };
 Rail_Switch_DC superordinateRailSwitches[] =
 {
+  Rail_Switch_DC(superordinateRailSwitchPins_EN[0], superordinateRailSwitchPins_IN1[0], superordinateRailSwitchPins_IN2[0])
 };
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
@@ -790,10 +800,6 @@ void update_rail_switches() {
         }
         if (thisAntiSwitchIndex != -1) {
           // Serial.println("Dir 1, AntiSwitchIndex Found");
-          // prevRailSectionName is the section we came from; not tracked at departure, so look up
-          // using plannedRailSectionsNames[0] as a proxy (where we are heading) — if the section
-          // is a converging junction being departed forward, this antiswitch is set by the planned
-          // sections loop instead; guard against -1 to prevent UB.
           prevRailSectionName = trains[t]._plannedRailSectionsNames[0];
           thisPlannedSwitchIndex = get_index_of_string(3, allSuperordinateNames[thisRailSectionIndex], prevRailSectionName);
           // Serial.print("Pre-Switch Rail Section: "); Serial.println(prevRailSectionName);
@@ -829,8 +835,6 @@ void update_rail_switches() {
         }
         if (thisAntiSwitchIndex != -1) {
           // Serial.println("Dir -1, AntiSwitchIndex Found");
-          // When going backward through a diverge-point, the subordinate switch must align with
-          // the branch we are coming from (plannedRailSectionsNames[0]).
           prevRailSectionName = trains[t]._plannedRailSectionsNames[0];
           thisPlannedSwitchIndex = get_index_of_string(3, allSubordinateNames[thisRailSectionIndex], prevRailSectionName);
           // Serial.print("Pre-Switch Rail Section: "); Serial.println(prevRailSectionName);
@@ -974,7 +978,7 @@ void update_oled_display() {
   display.println("");
 
   display.setCursor(0,20);
-  display.print("Curr: "); display.print(trains[0]._currentRailSectionName); display.println("");
+  display.print("Curr: "); display.print(trains[0]._currentRailSectionName); display.print("");
   
   display.setCursor(0,30);
   if (trains[0]._departStation == true) {
